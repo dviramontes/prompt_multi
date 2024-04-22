@@ -18,6 +18,8 @@ defmodule PromptMultiWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/chat", ChatLive.Index, :index
   end
 
   # Other scopes may use custom stacks.
