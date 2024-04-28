@@ -11,8 +11,7 @@ defmodule PromptMulti.Application do
       PromptMultiWeb.Telemetry,
       PromptMulti.Repo,
       {Ecto.Migrator,
-        repos: Application.fetch_env!(:prompt_multi, :ecto_repos),
-        skip: skip_migrations?()},
+       repos: Application.fetch_env!(:prompt_multi, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:prompt_multi, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PromptMulti.PubSub},
       # Start the Finch HTTP client for sending emails
