@@ -67,3 +67,6 @@ import_config "#{config_env()}.exs"
 
 # Anthropic
 config :anthropix, api_key: System.get_env("ANTHROPIC_API_KEY")
+
+# OpenAI
+config :openai, api_key: System.get_env("OPENAI_API_KEY")

@@ -58,7 +58,8 @@ defmodule PromptMulti.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:anthropix, "~> 0.3.0"}
+      {:anthropix, "~> 0.3.0"},
+      {:req, "~> 0.4.14"}
     ]
   end
 

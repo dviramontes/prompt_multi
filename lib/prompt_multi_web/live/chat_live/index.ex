@@ -2,6 +2,7 @@ defmodule PromptMultiWeb.ChatLive.Index do
   use PromptMultiWeb, :live_view
 
   alias PromptMulti.ChatBots.Claude
+  alias PromptMulti.ChatBots.OpenAI
 
   @impl true
   def render(assigns) do
@@ -15,13 +16,15 @@ defmodule PromptMultiWeb.ChatLive.Index do
           <.button>Send</.button>
         </:actions>
       </.simple_form>
-      <div :if={@question} class="flex flex-col">
-        <h2>> Question</h2>
-        <p>>>><%= @question %></p>
-      </div>
-      <div :if={@claude_response} class="flex flex-col">
-        <h2>+ Claude Response</h2>
-        <p><%= @claude_response %></p>
+      <div class="flex space-x-4">
+        <div class="w-1/2 bg-gray-200 p-4">
+          <h2 class="text-xl font-bold mb-2">+ Claude Response</h2>
+          <p><%= @claude_response %></p>
+        </div>
+        <div class="w-1/2 bg-gray-300 p-4">
+          <h2 class="text-xl font-bold mb-2">+ OpenAI Response</h2>
+          <p><%= @open_ai_response %></p>
+        </div>
       </div>
     </div>
     """
@@ -44,6 +47,7 @@ defmodule PromptMultiWeb.ChatLive.Index do
     pid = self()
 
     _stream = Claude.query(question, pid)
+    OpenAI.query(question, pid)
 
     {:noreply, assign(socket, question: question)}
   end
@@ -51,18 +55,8 @@ defmodule PromptMultiWeb.ChatLive.Index do
   @impl true
   def handle_info({_ref_id, {:data, message}}, socket) do
     case message["type"] do
-      "message_start" ->
-        IO.puts("message_start")
-
-      "content_block_start" ->
-        IO.puts("content_block_start")
-
       "content_block_delta" ->
-        IO.puts("content_block_start")
         {:ok, message["delta"]["text"]}
-
-      "message_stop" ->
-        IO.puts("message_stop")
 
       message_type ->
         IO.puts("#message: #{message_type}, not handled")
@@ -73,6 +67,20 @@ defmodule PromptMultiWeb.ChatLive.Index do
 
       _ ->
         {:noreply, socket}
+    end
+  end
+
+  def handle_info({:gpt_response, decoded_data}, socket) do
+    unless decoded_data["choices"] == [] do
+      chunk = decoded_data["choices"] |> List.first() |> get_in(["delta", "content"])
+
+      unless chunk == "" or is_nil(chunk) do
+        {:noreply, assign(socket, open_ai_response: socket.assigns.open_ai_response <> chunk)}
+      else
+        {:noreply, socket}
+      end
+    else
+      {:noreply, socket}
     end
   end
 

@@ -1,14 +1,14 @@
 defmodule PromptMulti.ChatBots.Claude do
   alias PromptMulti.ChatBots.{Chunk, Delta}
 
-  def query(question, pid) do
+  def query(prompt, pid) do
     api_key = Application.get_env(:anthropix, :api_key)
     client = Anthropix.init(api_key)
 
     messages = [
       %{role: "user", content: "You are a helpful assistant."},
       %{role: "assistant", content: "Using the theory of constrains."},
-      %{role: "user", content: question}
+      %{role: "user", content: prompt}
     ]
 
     # latest_model = "claude-3-opus-20240229"
