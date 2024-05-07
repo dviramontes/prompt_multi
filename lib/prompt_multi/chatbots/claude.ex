@@ -11,6 +11,7 @@ defmodule PromptMulti.ChatBots.Claude do
       %{role: "user", content: prompt}
     ]
 
+    # best
     # latest_model = "claude-3-opus-20240229"
     faster_model = "claude-3-haiku-20240307"
 

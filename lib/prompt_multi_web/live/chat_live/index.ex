@@ -47,7 +47,7 @@ defmodule PromptMultiWeb.ChatLive.Index do
     pid = self()
 
     _stream = Claude.query(question, pid)
-    OpenAI.query(question, pid)
+    _request = OpenAI.query(question, pid)
 
     {:noreply, assign(socket, question: question)}
   end
@@ -56,6 +56,7 @@ defmodule PromptMultiWeb.ChatLive.Index do
   def handle_info({_ref_id, {:data, message}}, socket) do
     case message["type"] do
       "content_block_delta" ->
+        :timer.sleep(10)
         {:ok, message["delta"]["text"]}
 
       message_type ->
@@ -75,6 +76,7 @@ defmodule PromptMultiWeb.ChatLive.Index do
       chunk = decoded_data["choices"] |> List.first() |> get_in(["delta", "content"])
 
       unless chunk == "" or is_nil(chunk) do
+        :timer.sleep(10)
         {:noreply, assign(socket, open_ai_response: socket.assigns.open_ai_response <> chunk)}
       else
         {:noreply, socket}
